@@ -6,6 +6,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 */
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import immutable.EmptyImList;
+import immutable.ImList;
 import sat.env.*;
 import sat.formula.*;
 
@@ -20,9 +27,91 @@ public class SATSolverTest {
 
 
 
-	
-	// TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
-    
+
+    // TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
+    public static void main(String[] args){
+        ArrayList<Integer> A = new ArrayList<>();
+        ImList<Integer> l = new EmptyImList<Integer>();
+        String path = args[0];
+        System.out.println(path);
+        FileInputStream cnf= null;     //opens a connection to an actual file
+        try {
+            cnf = new FileInputStream(path);
+            System.out.println("file content: ");
+            int r=0;
+            String cnfCheck = "";
+            boolean lChecker = false;
+            boolean cnfChecker = false;
+            boolean negChecker = false;
+            String fullString = "";
+            String storeNum = "";
+            while((r=cnf.read())!=-1)
+            {
+                cnfCheck = cnfCheck + (char)r;
+                if(cnfCheck.length() > 3){
+                    cnfCheck = cnfCheck.substring(1);
+                    //System.out.println(cnfCheck);
+                    if(cnfCheck.equals("cnf")){
+                        cnfChecker = true;
+                        //System.out.println(cnfCheck + "hi");
+                    }
+                }
+                if(!lChecker && r == 10 && cnfChecker){
+                    lChecker = true;
+                }
+                if(!Character.isAlphabetic((char)r) && cnfChecker && lChecker){
+                    String store = Character.toString((char)r);
+
+                    if(r != 32 && r != 10 && (char)r != '-'){
+                        store = storeNum + store;
+                    }
+
+                    //if(){
+                        //if(r == 10 || r == 32){
+                            //l = l.add(Integer.parseInt(store));
+                        //}
+                    //}
+                    if(r == 32 || r == 10 || (char)r == '-'){
+                        storeNum = "";
+                    }
+                    if(negChecker){
+                        store = "-" + store;
+                        negChecker = false;
+                    }
+                    if((char)r == '-'){
+                        negChecker = true;
+                    }
+
+                    if(r != 32 && r != 10 && (char)r != '-'){
+                        //System.out.print((char)r+ " ");
+                        storeNum = store;
+                        fullString = fullString +" " + store;
+                        System.out.print(store + " ");
+                    }
+
+                }      //prints the content of the file
+            }
+            System.out.println(fullString);
+            String[] splitStr = fullString.trim().split("\\s+");
+            for(int i = 0; i < splitStr.length; i++){
+
+                System.out.println(i + " " + splitStr[i]);
+                //System.out.println(Integer.parseInt(splitStr[i]));
+                int tempNum = Integer.parseInt(splitStr[i]);
+                System.out.println(tempNum + "tempNum");
+                A.add(tempNum);
+                //System.out.println(l);
+            }
+            System.out.println();
+            System.out.println(A);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 	
     public void testSATSolver1(){
     	// (a v b)
