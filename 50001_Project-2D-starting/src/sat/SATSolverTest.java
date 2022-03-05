@@ -6,9 +6,14 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 */
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import immutable.EmptyImList;
@@ -35,99 +40,42 @@ public class SATSolverTest {
         String path = args[0];
         Formula f2 = new Formula();
         System.out.println(path);
-        FileInputStream cnf= null;     //opens a connection to an actual file
+        String var = "";
+        //https://www.javatpoint.com/how-to-read-file-line-by-line-in-java
         try {
-            cnf = new FileInputStream(path);
-            System.out.println("file content: ");
-            int r=0;
-            String cnfCheck = "";
-            boolean lChecker = false;
-            boolean cnfChecker = false;
-            boolean negChecker = false;
-            String fullString = "";
-            String storeNum = "";
-            while((r=cnf.read())!=-1)
+            File file=new File(path);
+            FileReader fr=new FileReader(file);
+            BufferedReader br=new BufferedReader(fr); //constructs a string buffer with no characters
+            String line;
+            Boolean cnfChecker = false;
+            while((line=br.readLine())!=null)
             {
-                cnfCheck = cnfCheck + (char)r;
-                if(cnfCheck.length() > 3){
-                    cnfCheck = cnfCheck.substring(1);
-                    //System.out.println(cnfCheck);
-                    if(cnfCheck.equals("cnf")){
+
+                if (line.length() > 0) {
+                    if(cnfChecker){
+                        storedClauses.add(line);
+                    }    //line feed
+
+                    if(line.substring(0,1).equals("p")){
+                        String[] cnfLine = line.split("\\s+");
+                        var = cnfLine[2];
                         cnfChecker = true;
-                        //System.out.println(cnfCheck + "hi");
                     }
                 }
-                if(!lChecker && r == 10 && cnfChecker){
-                    lChecker = true;
-                }
-                if(!Character.isAlphabetic((char)r) && cnfChecker && lChecker){
-                    String store = Character.toString((char)r);
 
-                    if(r != 32 && r != 10 && (char)r != '-'){
-                        store = storeNum + store;
-                    }
-
-                    //if(){
-                        //if(r == 10 || r == 32){
-                            //l = l.add(Integer.parseInt(store));
-                        //}
-                    //}
-                    if(r == 32 || r == 10 || (char)r == '-'){
-                        storeNum = "";
-                    }
-                    if(negChecker){
-                        store = "-" + store;
-                        negChecker = false;
-                    }
-                    if((char)r == '-'){
-                        negChecker = true;
-                    }
-
-                    if(r != 32 && r != 10 && (char)r != '-'){
-                        //System.out.print((char)r+ " ");
-                        storeNum = store;
-                        fullString = fullString +" " + store;
-                        System.out.print(store + " ");
-                    }
-
-                }      //prints the content of the file
             }
-            System.out.println(fullString);
-            String[] splitStr = fullString.trim().split("\\s+");
-            String tempStr = "";
-            String space = " ";
-            for(int i = 0; i < splitStr.length; i++){
-                System.out.println(i + " " + splitStr[i]);
-                //System.out.println(Integer.parseInt(splitStr[i]));
-                String tempNum = splitStr[i];
-                if(tempStr.equals("")){
-                    tempStr = tempStr + tempNum;
-                }
-                else{
-                    tempStr = tempStr + space + tempNum;
-                }
-                if(tempNum.equals("0")){
-                    storedClauses.add(tempStr.substring(0, tempStr.length() - 2));
-                    tempStr = "";
-                }
-                //System.out.println(tempNum + "tempNum");
-                //System.out.println(l);
-            }
-            System.out.println();
-            System.out.println(storedClauses);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            fr.close(); //closes the file
+            System.out.println("file content: ");
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
-        for (String line : storedClauses) {
-            System.out.println(line);
-        }
-
-        for (String line : storedClauses) {
+        for(String line : storedClauses) {
             Clause clause = new Clause();
             String[] litList = line.split("\\s+");
+
             for (String lit : litList) {
                 boolean checker = true;
                 if (lit.substring(0, 1).equals("-")) {
@@ -138,11 +86,11 @@ public class SATSolverTest {
                     }
                     if(checker){
 
-                        System.out.print(lit + " ");
-                        System.out.print(clause);
                         String negLit = lit.substring(1);
                         String negLit2 = negLit;
                         clause = clause.add(NegLiteral.make(negLit2));
+                        System.out.print(lit + " ");
+                        System.out.print(clause);
                     }
                 }
                 else {
@@ -153,25 +101,52 @@ public class SATSolverTest {
                     }
                     if(checker){
 
-                        System.out.print(lit + " ");
-                        System.out.print(clause);
 
                         clause = clause.add(PosLiteral.make(lit));
+                        System.out.print(lit + " ");
+                        System.out.print(clause);
                     }
                 }
 
             }
-            System.out.println();
+            //System.out.println();
             f2 = f2.addClause(clause);
         }
-        System.out.println(f2);
+        //System.out.println(f2);
         System.out.println("SAT solver starts!!!");
         long started = System.nanoTime();
         Environment e = SATSolver.solve(f2);
         long time = System.nanoTime();
         long timeTaken= time - started;
         System.out.println("Time:" + timeTaken/1000000.0 + "ms");
+        if (e == null) {
+            System.out.println("not satisfiable");
+        }
+        else {
+            System.out.println("satisfiable\n"+e);
+            try {
+                //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
+                String path2 = "/Users/nicho/Desktop/BoolAssignment.txt";
+                PrintWriter out = new PrintWriter(new FileWriter(path2));
+                int i = 1;
+                while(i <= Integer.parseInt(var)){
+                    Bool result = e.get(new Variable(Integer.toString(i)));
+                    if (result == Bool.TRUE) {
+                        out.println(i + ":TRUE");
+                    }
+                    else {
+                        out.println(i + ":FALSE");
+                    }
+                    i += 1;
+                }
+                out.close();
+
+            } catch (IOException env) {
+                env.printStackTrace();
+            }
+        }
     }
+
 
 	
     public void testSATSolver1(){
