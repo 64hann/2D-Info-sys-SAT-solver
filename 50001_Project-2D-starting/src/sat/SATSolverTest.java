@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -36,6 +35,8 @@ public class SATSolverTest {
     // TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
     public static void main(String[] args){
         ArrayList<String> storedClauses = new ArrayList<>();
+        ArrayList<String> storedClauses2 = new ArrayList<>();
+        ArrayList<String> storedClauses3 = new ArrayList<>();
         ImList<Integer> l = new EmptyImList<Integer>();
         String path = args[0];
         Formula f2 = new Formula();
@@ -71,8 +72,31 @@ public class SATSolverTest {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+        //Making the clauses into individual words
+        for(String line : storedClauses){
+            //https://javarevisited.blogspot.com/2016/10/how-to-check-if-string-contains-another-substring-in-java-indexof-example.html#axzz7MePsa4uU
+            String[] strList = line.split("\\s+");
+            for(String str : strList){
+                storedClauses2.add(str);
+            }
+        }
+        //Reordering to make sure the line is before 0, then remove 0.
+        String newLine = "";
+        for(String line : storedClauses2){
+            if(newLine.equals("")){
+                newLine = line;
+            }
+            else if (line.equals("0")){
+                storedClauses3.add(newLine);
+                newLine = "";
+            }
+            else{
+                newLine = newLine + " " + line;
+            }
 
-        for(String line : storedClauses) {
+        }
+        System.out.println("hi" + storedClauses3);
+        for(String line : storedClauses3){
             Clause clause = new Clause();
             String[] litList = line.split("\\s+");
 
@@ -80,7 +104,7 @@ public class SATSolverTest {
                 boolean checker = true;
                 if (lit.substring(0, 1).equals("-")) {
                     for(String i : litList){
-                        if(lit.substring(1).equals(i)){
+                        if(lit.substring(1).equals(i)){// checking if there are repeats of literals
                             checker = false;
                         }
                     }
@@ -89,12 +113,12 @@ public class SATSolverTest {
                         String negLit = lit.substring(1);
                         String negLit2 = negLit;
                         clause = clause.add(NegLiteral.make(negLit2));
-                        System.out.print(lit + " ");
-                        System.out.print(clause);
+                        //System.out.print(lit + " ");
+                        //System.out.print(clause);
                     }
                 }
                 else {
-                    for(String i : litList){
+                    for(String i : litList){// checking if there are repeats of literals
                         if(lit.equals(i.substring(1))){
                             checker = false;
                         }
@@ -103,8 +127,8 @@ public class SATSolverTest {
 
 
                         clause = clause.add(PosLiteral.make(lit));
-                        System.out.print(lit + " ");
-                        System.out.print(clause);
+                        //System.out.print(lit + " ");
+                        //System.out.print(clause);
                     }
                 }
 
@@ -112,7 +136,9 @@ public class SATSolverTest {
             //System.out.println();
             f2 = f2.addClause(clause);
         }
-        //System.out.println(f2);
+
+
+        System.out.println("hi" + f2);
         System.out.println("SAT solver starts!!!");
         long started = System.nanoTime();
         Environment e = SATSolver.solve(f2);
