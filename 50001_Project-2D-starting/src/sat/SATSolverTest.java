@@ -25,9 +25,9 @@ public class SATSolverTest {
 
     // TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
     public static void main(String[] args){
+        ArrayList<String> storedLines = new ArrayList<>();
         ArrayList<String> storedClauses = new ArrayList<>();
-        ArrayList<String> storedClauses2 = new ArrayList<>();
-        ArrayList<String> storedClauses3 = new ArrayList<>();
+        ArrayList<String> storedLines2 = new ArrayList<>();
         String path = args[0];
         Formula f2 = new Formula();
         //System.out.println(path);
@@ -37,7 +37,7 @@ public class SATSolverTest {
         	//reading the file
             File file=new File(path);
             FileReader fr=new FileReader(file);
-            BufferedReader br=new BufferedReader(fr); //constructs a string buffer with no characters
+            BufferedReader br=new BufferedReader(fr);
             String line;
             Boolean cnfChecker = false;
             while((line=br.readLine())!=null)
@@ -45,7 +45,7 @@ public class SATSolverTest {
 
                 if (line.length() > 0) {
                     if(cnfChecker){
-                        storedClauses.add(line);
+                    	storedLines.add(line);
                     }    //line feed
 
                     if(line.substring(0,1).equals("p")){
@@ -65,7 +65,7 @@ public class SATSolverTest {
             ioException.printStackTrace();
         }
         //Making the clauses into individual words
-        for(String line : storedClauses){
+        for(String line : storedLines){
             //https://javarevisited.blogspot.com/2016/10/how-to-check-if-string-contains-another-substring-in-java-indexof-example.html#axzz7MePsa4uU
             String[] strList = line.split("\\s+");
             for(String str : strList){
@@ -73,14 +73,14 @@ public class SATSolverTest {
             }
         }
         //Reordering to make sure the line is before 0, then remove 0.
-        System.out.println("hi" + storedClauses2);
+        System.out.println("hi" + storedClauses);
         String newLine = "";
-        for(String line : storedClauses2){
+        for(String line : storedClauses){
             if(newLine.equals("")){
                 newLine = line;
             }
             else if (line.equals("0")){
-                storedClauses3.add(newLine);
+            	storedLines2.add(newLine);
                 newLine = "";
             }
             else{
@@ -90,7 +90,7 @@ public class SATSolverTest {
         }
         //checking clauses for posliteral or negliteral and adding to clauselist
         //then adding each clauselist to formula list
-        for(String line : storedClauses3){
+        for(String line : storedLines2){
             Clause clause = new Clause();
             String[] litList = line.split("\\s+");
 
