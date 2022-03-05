@@ -30,9 +30,10 @@ public class SATSolverTest {
 
     // TODO: add the main method that reads the .cnf file and calls SATSolver.solve to determine the satisfiability
     public static void main(String[] args){
-        ArrayList<Integer> A = new ArrayList<>();
+        ArrayList<String> storedClauses = new ArrayList<>();
         ImList<Integer> l = new EmptyImList<Integer>();
         String path = args[0];
+        Formula f2 = new Formula();
         System.out.println(path);
         FileInputStream cnf= null;     //opens a connection to an actual file
         try {
@@ -93,25 +94,85 @@ public class SATSolverTest {
             }
             System.out.println(fullString);
             String[] splitStr = fullString.trim().split("\\s+");
+            String tempStr = "";
+            String space = " ";
             for(int i = 0; i < splitStr.length; i++){
-
                 System.out.println(i + " " + splitStr[i]);
                 //System.out.println(Integer.parseInt(splitStr[i]));
-                int tempNum = Integer.parseInt(splitStr[i]);
-                System.out.println(tempNum + "tempNum");
-                A.add(tempNum);
+                String tempNum = splitStr[i];
+                if(tempStr.equals("")){
+                    tempStr = tempStr + tempNum;
+                }
+                else{
+                    tempStr = tempStr + space + tempNum;
+                }
+                if(tempNum.equals("0")){
+                    storedClauses.add(tempStr.substring(0, tempStr.length() - 2));
+                    tempStr = "";
+                }
+                //System.out.println(tempNum + "tempNum");
                 //System.out.println(l);
             }
             System.out.println();
-            System.out.println(A);
+            System.out.println(storedClauses);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        for (String line : storedClauses) {
+            System.out.println(line);
+        }
 
+        for (String line : storedClauses) {
+            Clause clause = new Clause();
+            String[] litList = line.split("\\s+");
+            for (String lit : litList) {
+                boolean checker = true;
+                if (lit.substring(0, 1).equals("-")) {
+                    for(String i : litList){
+                        if(lit.substring(1).equals(i)){
+                            checker = false;
+                        }
+                    }
+                    if(checker){
+
+                        System.out.print(lit + " ");
+                        System.out.print(clause);
+                        String negLit = lit.substring(1);
+                        String negLit2 = negLit;
+                        clause = clause.add(NegLiteral.make(negLit2));
+                    }
+                }
+                else {
+                    for(String i : litList){
+                        if(lit.equals(i.substring(1))){
+                            checker = false;
+                        }
+                    }
+                    if(checker){
+
+                        System.out.print(lit + " ");
+                        System.out.print(clause);
+
+                        clause = clause.add(PosLiteral.make(lit));
+                    }
+                }
+
+            }
+            System.out.println();
+            f2 = f2.addClause(clause);
+        }
+        System.out.println(f2);
+        System.out.println("SAT solver starts!!!");
+        long started = System.nanoTime();
+        Environment e = SATSolver.solve(f2);
+        long time = System.nanoTime();
+        long timeTaken= time - started;
+        System.out.println("Time:" + timeTaken/1000000.0 + "ms");
     }
+
 	
     public void testSATSolver1(){
     	// (a v b)
