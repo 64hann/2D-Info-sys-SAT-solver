@@ -69,7 +69,7 @@ public class SATSolverTest {
             //https://javarevisited.blogspot.com/2016/10/how-to-check-if-string-contains-another-substring-in-java-indexof-example.html#axzz7MePsa4uU
             String[] strList = line.split("\\s+");
             for(String str : strList){
-                storedClauses2.add(str);
+            	storedClauses.add(str);
             }
         }
         //Reordering to make sure the line is before 0, then remove 0.
@@ -183,7 +183,4 @@ public class SATSolverTest {
         }
         return c;
     }
-
-
-
 }
