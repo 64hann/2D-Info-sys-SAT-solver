@@ -5,14 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 */
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 
 import immutable.EmptyImList;
@@ -37,13 +30,13 @@ public class SATSolverTest {
         ArrayList<String> storedClauses = new ArrayList<>();
         ArrayList<String> storedClauses2 = new ArrayList<>();
         ArrayList<String> storedClauses3 = new ArrayList<>();
-        ImList<Integer> l = new EmptyImList<Integer>();
         String path = args[0];
         Formula f2 = new Formula();
-        System.out.println(path);
+        //System.out.println(path);
         String var = "";
-        //https://www.javatpoint.com/how-to-read-file-line-by-line-in-java
+        //help from https://www.javatpoint.com/how-to-read-file-line-by-line-in-java
         try {
+        	//reading the file
             File file=new File(path);
             FileReader fr=new FileReader(file);
             BufferedReader br=new BufferedReader(fr); //constructs a string buffer with no characters
@@ -66,7 +59,8 @@ public class SATSolverTest {
 
             }
             fr.close(); //closes the file
-            System.out.println("file content: ");
+            //System.out.println("file content: ");
+            
         } catch (FileNotFoundException fileNotFoundException) {
             fileNotFoundException.printStackTrace();
         } catch (IOException ioException) {
@@ -81,6 +75,7 @@ public class SATSolverTest {
             }
         }
         //Reordering to make sure the line is before 0, then remove 0.
+        System.out.println("hi" + storedClauses2);
         String newLine = "";
         for(String line : storedClauses2){
             if(newLine.equals("")){
@@ -95,7 +90,8 @@ public class SATSolverTest {
             }
 
         }
-        System.out.println("hi" + storedClauses3);
+        //checking clauses for posliteral or negliteral and adding to clauselist
+        //then adding each clauselist to formula list
         for(String line : storedClauses3){
             Clause clause = new Clause();
             String[] litList = line.split("\\s+");
@@ -103,42 +99,20 @@ public class SATSolverTest {
             for (String lit : litList) {
                 boolean checker = true;
                 if (lit.substring(0, 1).equals("-")) {
-                    for(String i : litList){
-                        if(lit.substring(1).equals(i)){// checking if there are repeats of literals
-                            checker = false;
-                        }
-                    }
                     if(checker){
-
-                        String negLit = lit.substring(1);
-                        String negLit2 = negLit;
-                        clause = clause.add(NegLiteral.make(negLit2));
-                        //System.out.print(lit + " ");
-                        //System.out.print(clause);
+                        clause = clause.add(NegLiteral.make(lit.substring(1)));
                     }
                 }
                 else {
-                    for(String i : litList){// checking if there are repeats of literals
-                        if(lit.equals(i.substring(1))){
-                            checker = false;
-                        }
-                    }
                     if(checker){
-
-
                         clause = clause.add(PosLiteral.make(lit));
-                        //System.out.print(lit + " ");
-                        //System.out.print(clause);
                     }
                 }
 
             }
-            //System.out.println();
             f2 = f2.addClause(clause);
         }
-
-
-        System.out.println("hi" + f2);
+        //Starting to solve
         System.out.println("SAT solver starts!!!");
         long started = System.nanoTime();
         Environment e = SATSolver.solve(f2);
@@ -154,6 +128,7 @@ public class SATSolverTest {
                 //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
                 String path2 = "/Users/nicho/Desktop/BoolAssignment.txt";
                 PrintWriter out = new PrintWriter(new FileWriter(path2));
+
                 int i = 1;
                 while(i <= Integer.parseInt(var)){
                     Bool result = e.get(new Variable(Integer.toString(i)));
@@ -174,27 +149,27 @@ public class SATSolverTest {
     }
 
 
-	
+
     public void testSATSolver1(){
     	// (a v b)
     	Environment e = SATSolver.solve(makeFm(makeCl(a,b))	);
 /*
     	assertTrue( "one of the literals should be set to true",
-    			Bool.TRUE == e.get(a.getVariable())  
+    			Bool.TRUE == e.get(a.getVariable())
     			|| Bool.TRUE == e.get(b.getVariable())	);
-    	
-*/    	
+
+*/
     }
-    
-    
+
+
     public void testSATSolver2(){
     	// (~a)
     	Environment e = SATSolver.solve(makeFm(makeCl(na)));
 /*
     	assertEquals( Bool.FALSE, e.get(na.getVariable()));
-*/    	
+*/
     }
-    
+
     private static Formula makeFm(Clause... e) {
         Formula f = new Formula();
         for (Clause c : e) {
@@ -202,7 +177,7 @@ public class SATSolverTest {
         }
         return f;
     }
-    
+
     private static Clause makeCl(Literal... e) {
         Clause c = new Clause();
         for (Literal l : e) {
@@ -210,7 +185,7 @@ public class SATSolverTest {
         }
         return c;
     }
-    
-    
-    
+
+
+
 }
