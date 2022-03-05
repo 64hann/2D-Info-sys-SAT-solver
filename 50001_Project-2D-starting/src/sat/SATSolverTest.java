@@ -8,8 +8,6 @@ import org.junit.Test;
 import java.io.*;
 import java.util.ArrayList;
 
-import immutable.EmptyImList;
-import immutable.ImList;
 import sat.env.*;
 import sat.formula.*;
 
