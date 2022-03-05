@@ -124,7 +124,7 @@ public class SATSolverTest {
             System.out.println("satisfiable\n"+e);
             try {
                 //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
-                String path2 = "/Users/nicho/Desktop/BoolAssignment.txt";
+                String path2 = "BoolAssignment.txt";
                 PrintWriter out = new PrintWriter(new FileWriter(path2));
 
                 int i = 1;
