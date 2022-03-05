@@ -118,10 +118,11 @@ public class SATSolverTest {
         long timeTaken= time - started;
         System.out.println("Time:" + timeTaken/1000000.0 + "ms");
         if (e == null) {
-            System.out.println("not satisfiable");
+            System.out.println("Not Satisfiable");
         }
         else {
-            System.out.println("satisfiable\n"+e);
+            System.out.println("Satisfiable");
+            System.out.println(e);
             try {
                 //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
                 String path2 = "BoolAssignment.txt";
