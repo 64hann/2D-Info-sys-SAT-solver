@@ -73,7 +73,6 @@ public class SATSolverTest {
             }
         }
         //Reordering to make sure the line is before 0, then remove 0.
-        System.out.println("hi" + storedClauses);
         String newLine = "";
         for(String line : storedClauses){
             if(newLine.equals("")){
