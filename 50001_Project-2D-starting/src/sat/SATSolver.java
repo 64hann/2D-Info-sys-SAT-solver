@@ -7,6 +7,7 @@ import sat.formula.*;
 /**
  * A simple DPLL SAT solver. See http://en.wikipedia.org/wiki/DPLL_algorithm
  */
+//Done by Krit
 public class SATSolver {
     /**
      * Solve the problem using a simple version of DPLL with backtracking and
@@ -61,9 +62,10 @@ public class SATSolver {
         Literal l = smallest.chooseLiteral();
         Variable v = l.getVariable();
         //System.out.println(v.toString());
+
+        Bool b;
         if (smallest.isUnit())
         {
-            Bool b;
             if (l instanceof PosLiteral)
             {
                 b = Bool.TRUE;
@@ -88,9 +90,9 @@ public class SATSolver {
             //System.out.println(smallest.toString());
             if (newenv == null)
             {
-                newb = Bool.FALSE;
+                Bool newb = Bool.FALSE;
                 env = env.put(v, newb);
-                return solve(substitute(clauses, l.getNegation(), env));
+                return solve(substitute(clauses, l.getNegation()), env);
             }
             return newenv;
         }
