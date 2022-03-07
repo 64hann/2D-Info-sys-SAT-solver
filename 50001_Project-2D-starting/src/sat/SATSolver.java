@@ -20,9 +20,9 @@ public class SATSolver {
      */
     public static Environment solve(Formula formula)
     {
-        Environment newEnv = new Environment(); //environment
+        Environment newEnv = new Environment(); 
 
-        return solve(formula.getClauses(), newEnv); //recursion
+        return solve(formula.getClauses(), newEnv); 
     }
 
     /**
@@ -38,10 +38,6 @@ public class SATSolver {
      *         or null if no such environment exists.
      */
     private static Environment solve(ImList<Clause> clauses, Environment env) {
-        // find smallest clause
-        // if number of literals = 1, call substitute()
-        // else use the code here
-        // choose a literal here, set it to be TRUE
         if (clauses.isEmpty()) //check if variable has a truth value
         {
             return env; //return SAT if there is none
@@ -61,7 +57,6 @@ public class SATSolver {
         }
         Literal l = smallest.chooseLiteral();
         Variable v = l.getVariable();
-        //System.out.println(v.toString());
 
         Bool b;
         if (smallest.isUnit())
@@ -75,7 +70,6 @@ public class SATSolver {
                 b = Bool.FALSE;
             }
             env = env.put(v, b);
-            //System.out.println(smallest.toString());
             return solve(substitute(clauses, l), env);
         }
         else
@@ -87,7 +81,6 @@ public class SATSolver {
             b = Bool.TRUE;
             env = env.put(v, b);
             Environment newenv = solve(substitute(clauses, l), env);
-            //System.out.println(smallest.toString());
             if (newenv == null)
             {
                 Bool newb = Bool.FALSE;
@@ -120,10 +113,6 @@ public class SATSolver {
             }
         }
         return sub;
-        // use if number of literals in a clause = 1
-        // assign that literal value for the entire list
-        // eliminate all the other blanks that are not literals
-        // call solve
     }
 
 }
