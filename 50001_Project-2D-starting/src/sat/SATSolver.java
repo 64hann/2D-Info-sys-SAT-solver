@@ -82,11 +82,15 @@ public class SATSolver {
             {
                 l = l.getNegation();
             }
-            Environment newenv = solve(substitute(clauses, l),env.put(v, Bool.TRUE));
+            b = Bool.TRUE;
+            env = env.put(v, b);
+            Environment newenv = solve(substitute(clauses, l), env);
             //System.out.println(smallest.toString());
             if (newenv == null)
             {
-                return solve(substitute(clauses, l.getNegation()),env.put(v, Bool.FALSE));
+                newb = Bool.FALSE;
+                env = env.put(v, newb);
+                return solve(substitute(clauses, l.getNegation(), env));
             }
             return newenv;
         }
@@ -104,16 +108,16 @@ public class SATSolver {
      */
     private static ImList<Clause> substitute(ImList<Clause> clauses,
                                              Literal l) {
-        ImList<Clause> substituted = new EmptyImList<Clause>();
+        ImList<Clause> sub = new EmptyImList<Clause>();
         for (Clause c : clauses)
         {
             Clause newc = c.reduce(l);
             if (newc != null)
             {
-                substituted = substituted.add(newc);
+                sub = sub.add(newc);
             }
         }
-        return substituted;
+        return sub;
         // use if number of literals in a clause = 1
         // assign that literal value for the entire list
         // eliminate all the other blanks that are not literals
