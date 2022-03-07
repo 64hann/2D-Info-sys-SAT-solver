@@ -42,7 +42,6 @@ public class SATSolverTest {
             Boolean cnfChecker = false;
             while((line=br.readLine())!=null)
             {
-
                 if (line.length() > 0) {
                     if(cnfChecker){
                     	storedLines.add(line);
@@ -96,11 +95,21 @@ public class SATSolverTest {
             for (String lit : litList) {
                 boolean checker = true;
                 if (lit.substring(0, 1).equals("-")) {
+                    for(String i : litList){
+                        if(lit.substring(1).equals(i) && lit.substring(0,1).equals("-")){
+                            checker = false;
+                        }
+                    }
                     if(checker){
                         clause = clause.add(NegLiteral.make(lit.substring(1)));
                     }
                 }
                 else {
+                    for(String i : litList){
+                        if(lit.equals(i.substring(1)) && i.substring(0,1).equals("-")){
+                            checker = false;
+                        }
+                    }
                     if(checker){
                         clause = clause.add(PosLiteral.make(lit));
                     }
@@ -124,7 +133,7 @@ public class SATSolverTest {
             System.out.println(e);
             try {
                 //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
-                String path2 = "BoolAssignment.txt";
+                String path2 = "/Users/nicho/Desktop/BoolAssignment.txt";
                 PrintWriter out = new PrintWriter(new FileWriter(path2));
 
                 int i = 1;
