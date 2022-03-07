@@ -133,7 +133,8 @@ public class SATSolverTest {
             System.out.println(e);
             try {
                 //Sample from https://www.homeandlearn.co.uk/java/write_to_textfile.html
-                String path2 = "/Users/nicho/Desktop/BoolAssignment.txt";
+                String outputFileName = "BoolAssignment";
+                String path2 = System.getProperty("user.dir")  + "/" + outputFileName + ".txt";
                 PrintWriter out = new PrintWriter(new FileWriter(path2));
 
                 int i = 1;
