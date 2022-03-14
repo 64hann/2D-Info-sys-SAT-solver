@@ -15,8 +15,8 @@ public class Graph {
     // Constructor --> create empty graph with vertices but no edges
     Graph(int v){
         V = v;
-        adj = new LinkedList[v];
-        for (int i = 0; i < v ; i++){
+        adj = new LinkedList[v+1];
+        for (int i = 0; i <= v ; i++){
             adj[i] = new LinkedList();
         }
 
@@ -43,7 +43,7 @@ public class Graph {
     }
     void DFS_recursive2(int v, boolean visited[]){
         visited[v] = true;
-        System.out.println(v + " ");
+        //System.out.println(v + " ");
 //        scc_list.add(v);
 
         int n;
@@ -93,9 +93,7 @@ public class Graph {
     }
     // The main function that finds and prints all strongly
     // connected components
-    int[] returnSCCs()
-    {
-        // initialise empty stack
+    Stack returnStack(){
         Stack stack = new Stack();
 
         // Mark all the vertices as not visited
@@ -107,12 +105,28 @@ public class Graph {
         for (int i = 0; i < V; i++)
             if (visited[i] == false)
                 orderFinishingTimes(i, visited, stack);
-
+        return stack;
+    }
+    int[] returnSCCs()
+    {
+//        // initialise empty stack
+//        Stack stack = new Stack();
+//
+//        // Mark all the vertices as not visited
+//        boolean visited[] = new boolean[V];
+//        for(int i = 0; i < V; i++)
+//            visited[i] = false;
+//
+//        // Fill vertices in stack according to their finishing times
+//        for (int i = 0; i < V; i++)
+//            if (visited[i] == false)
+//                orderFinishingTimes(i, visited, stack);
+        Stack stack = returnStack();
         // Create a reversed graph
         Graph gr = getReverse();
 
-        // Mark all the vertices as not visited for 2nd DFS
-        for (int i = 0; i < V; i++)
+        boolean visited[] = new boolean[V];
+        for(int i = 0; i < V; i++)
             visited[i] = false;
 
         // Now process all vertices in order defined by Stack
@@ -125,7 +139,7 @@ public class Graph {
             if (visited[v] == false)
             {
                 gr.DFS_recursive2(v, visited);
-                System.out.println();
+                //System.out.println();
 //                scc.add(scc_list);
                 // increase counter as scc is completed
                 counter++;
